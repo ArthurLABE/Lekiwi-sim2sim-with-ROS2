@@ -41,12 +41,15 @@ Why "humble"? Simply because we did it with this version. You can try replacing 
 ### 3. Install required ROS 2 dependencies
 > [!TIP]
 >You may need to adapt these commands to your version by replacing "humble" with "jazzy" or another one(yours).
-
-    rosdep update
-    rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
-    sudo apt install ros-humble-moveit ros-humble-moveit-setup-assistant
-    sudo apt install ros-humble-cv-bridge
-    sudo apt install ros-humble-pinocchio
+```
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
+sudo apt install ros-humble-moveit ros-humble-moveit-setup-assistant
+sudo apt install ros-humble-cv-bridge
+sudo apt install ros-humble-pinocchio
+sudo apt install ros-humble-ros-gz
+sudo apt install ros-humble-ign-ros2-control
+```
 <br>
 
 ### 4. Install Python dependencies in a virtual environment (Pinocchio and Catkin fix)
