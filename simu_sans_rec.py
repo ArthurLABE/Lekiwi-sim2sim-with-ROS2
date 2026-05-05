@@ -29,7 +29,7 @@ class DatasetGeneratorNode(Node):
         self.bridge = CvBridge()
         
         # --- CONFIGURATION PINOCCHIO ---
-        urdf_path = '/home/polytech/Documents/Stage_ISIR/ROS/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf' # à ajuster si changement 
+        urdf_path = '/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf' # à ajuster si changement 
 
         self.model = pin.buildModelFromUrdf(urdf_path)
         self.data = self.model.createData()
@@ -159,7 +159,7 @@ class DatasetGeneratorNode(Node):
         """Déplace la boîte rouge aux nouvelles coordonnées"""
         
         # 1. On tente de la créer (marchera uniquement au tout premier épisode)
-        sdf_file = "/home/polytech/Documents/Stage_ISIR/ROS/lerobot_ws/src/lerobot_description/urdf/red_box.sdf"
+        sdf_file = "/lerobot_ws/src/lerobot_description/urdf/red_box.sdf"
         cmd_create = [
             "ros2", "run", "ros_gz_sim", "create",
             "-file", sdf_file,
