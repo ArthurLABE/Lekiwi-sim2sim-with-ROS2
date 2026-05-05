@@ -49,10 +49,29 @@ Why "humble"? Simply because we did it with this version. You can try replacing 
     sudo apt install ros-humble-pinocchio
 <br>
 
-### 4. Install Python dependencies (Pinocchio and Catkin fix)
+### 4. Install Python dependencies in a virtual environment (Pinocchio and Catkin fix)
 
-    pip install pinocchio
-    sudo apt-get install python3-catkin-pkg
+
+- 1. Installation of the virtual environment creation tool 
+```
+sudo apt update
+sudo apt install python3-venv
+```
+- 2. Creation of the virtual environment (named "lerobot_venv")
+```
+python3 -m venv ~/lerobot_venv --system-site-packages
+```
+- 3. Activation of this environnement
+```
+source ~/lerobot_venv/bin/activate
+```
+- 4. Installation of dependencies with `pip` 
+```
+pip install pinocchio catkin_pkg ``
+```  
+
+
+
 <br>
 
 ### 5. Build the workspace
@@ -74,7 +93,7 @@ You can **modify the FPS** of the cameras (from 10 to 30) in the files named `so
 <br>
 
 ### Replace the paths with your own absolute paths 
-    xacro ~/YOUR_PATH/lerobot_ws/src/lerobot_description/urdf/so101_base.xacro > ~/YOUR_PATH/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf
+    xacro ~/lerobot_ws/src/lerobot_description/urdf/so101_base.xacro > ~/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf
 <br>
 
 <br>
@@ -87,7 +106,7 @@ To use the simulated robot, you will need 3 to 4 terminals.
 
  In each new terminal, navigate to **lerobot_ws** (with `cd` command) and execute these two commands before doing anything else:
 
-    conda deactivate #if necessary
+    conda deactivate # excepted for 4th terminal
     source /opt/ros/humble/setup.bash
     source install/setup.bash
 
@@ -115,9 +134,14 @@ To use the simulated robot, you will need 3 to 4 terminals.
 ### Terminal 4: Run your Python Script (Dataset Generation / Inverse Kinematics)
 You can upload our files `.py` directly in the `src` folder, then : 
 
-    cd ~/YOUR_PATH/lerobot_ws/src/
+```
+cd ~/src/
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+source ~/lerobot_venv/bin/activate
+```
+`python3 dataset_generator.py`
 
-    python3 dataset_generator.py
 <br>
 
 > [!NOTE]
