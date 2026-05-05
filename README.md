@@ -69,6 +69,8 @@ Why "humble"? Simply because we did it with this version. You can try replacing 
 
 Our modified urdf files are located in the attached folder, put them in the following folder : lerobot_ws/src/lerobot_description/urdf
 
+You can **modify the FPS** of the cameras (from 10 to 30) in the files named `so101_base.xacro` and rebuild the urdf after.
+
 <br>
 
 ### Replace the paths with your own absolute paths 
@@ -83,7 +85,7 @@ Our modified urdf files are located in the attached folder, put them in the foll
 
 To use the simulated robot, you will need 3 to 4 terminals.
 
- In each new terminal, navigate to **lerobot_ws** (with cd command) and execute these two commands before doing anything else:
+ In each new terminal, navigate to **lerobot_ws** (with `cd` command) and execute these two commands before doing anything else:
 
     conda deactivate #if necessary
     source /opt/ros/humble/setup.bash
@@ -111,6 +113,7 @@ To use the simulated robot, you will need 3 to 4 terminals.
 <br>
 
 ### Terminal 4: Run your Python Script (Dataset Generation / Inverse Kinematics)
+You can upload our files `.py` directly in the `src` folder, then : 
 
     cd ~/YOUR_PATH/lerobot_ws/src/
 
