@@ -7,7 +7,11 @@ Our goal is to train our robot LeKiwi to perform tasks in the real world, withou
 We will later be able to compare the results obtained with the simulated dataset (sim2real) and those obtained with the dataset created via teleoperation.
 
 <img width="70%" height="618" alt="image" src="https://github.com/user-attachments/assets/e4d3b61c-f8f4-4c82-89a8-8f3b0307e686" />
+
 <br>
+
+> [!NOTE]
+> This repository is an adaptation of https://github.com/ycheng517/lerobot-ros and https://github.com/Pavankv92/lerobot_ws. If in doubt, please consult those pages.<br>
 
 <br>
 
@@ -35,7 +39,8 @@ Why "humble"? Simply because we did it with this version. You can try replacing 
 <br>
 
 ### 3. Install required ROS 2 dependencies
-Reminder : You may need to adapt these commands to your version by replacing "humble" with "jazzy" or another one(yours).
+> [!TIP]
+>You may need to adapt these commands to your version by replacing "humble" with "jazzy" or another one(yours).
 
     rosdep update
     rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
@@ -59,9 +64,11 @@ Reminder : You may need to adapt these commands to your version by replacing "hu
 
 ## II. (OPTIONAL) 3D Model Preparation (Only if modifying XACRO)
 
-If you modify the .xacro file (e.g., to add a camera or adjust the Tool Center Point), you must always compile it back into a .urdf file before launching the simulation.
+> [!WARNING]
+>If you modify the .xacro file (e.g., to add a camera or adjust the Tool Center Point), you must always compile it back into a .urdf file before launching the simulation.
 
-Our modified urdf files are located in the attached folder. 
+Our modified urdf files are located in the attached folder, put them in the following folder : lerobot_ws/src/lerobot_description/urdf
+
 <br>
 
 ### Replace the paths with your own absolute paths 
@@ -76,8 +83,9 @@ Our modified urdf files are located in the attached folder.
 
 To use the simulated robot, you will need 3 to 4 terminals.
 
-Note: In each new terminal, navigate to **lerobot_ws** (with cd command) and execute these two commands before doing anything else:
+ In each new terminal, navigate to **lerobot_ws** (with cd command) and execute these two commands before doing anything else:
 
+    conda deactivate #if necessary
     source /opt/ros/humble/setup.bash
     source install/setup.bash
 
@@ -96,7 +104,8 @@ Note: In each new terminal, navigate to **lerobot_ws** (with cd command) and exe
 <br>
 
 ### Terminal 3: Open the Video Bridge (To receive cameras in Python)
-Note: We used image_bridge here as it is much more performant than parameter_bridge for 30 FPS video streams.
+> [!NOTE]
+> We used image_bridge here as it is much more performant than parameter_bridge for 30 FPS video streams.
 
     ros2 run ros_gz_image image_bridge /camera_base/image_raw /camera_pince/image_raw
 <br>
