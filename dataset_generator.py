@@ -29,7 +29,7 @@ class DatasetGeneratorNode(Node):
         self.bridge = CvBridge()
         
         # --- CONFIGURATION PINOCCHIO ---
-        urdf_path = '/home/polytech/Documents/Stage_ISIR/ROS/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf' # à ajuster si changement 
+        urdf_path = '/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf' # à ajuster si changement 
 
         self.model = pin.buildModelFromUrdf(urdf_path)
         self.data = self.model.createData()
@@ -79,35 +79,6 @@ class DatasetGeneratorNode(Node):
     # ==========================================
     # CINÉMATIQUE INVERSE (PINOCCHIO)
     # ==========================================
-    """def solve_ik(self, target_position):
-        #Calcule les angles des moteurs pour atteindre (X,Y,Z)
-        # On définit l'orientation voulue pour la pince (pointant vers le bas/l'avant)
-        # Vous devrez peut-être ajuster ces angles RPY (Roll, Pitch, Yaw) selon l'orientation de votre pince
-        target_orientation = pin.rpy.rpyToMatrix(0, np.pi/2, 0) 
-        oMdes = pin.SE3(target_orientation, np.array(target_position))
-
-        q = pin.neutral(self.model) # Point de départ du calcul
-        eps = 1e-4
-        ITERS = 1000
-        DT = 1e-1
-        
-        for i in range(ITERS):
-            pin.forwardKinematics(self.model, self.data, q)
-            pin.updateFramePlacements(self.model, self.data)
-            
-            dMi = oMdes.actInv(self.data.oMf[self.ee_frame_id])
-            err = pin.log(dMi).vector
-            if np.linalg.norm(err) < eps:
-                break
-                
-            J = pin.computeFrameJacobian(self.model, self.data, q, self.ee_frame_id, pin.ReferenceFrame.LOCAL)
-            v = - np.linalg.pinv(J) @ err
-            q = pin.integrate(self.model, q, v * DT)
-            
-        # q contient tous les joints du robot (dont la mâchoire). 
-        # On ne renvoie que les 5 premiers pour le bras.
-        return q[:5].flatten().tolist()
-    """
     def solve_ik(self, target_position):
         """Calcule les angles des moteurs (Focus sur la Position 3D uniquement)"""
         
@@ -212,7 +183,7 @@ class DatasetGeneratorNode(Node):
         """Déplace la boîte rouge aux nouvelles coordonnées"""
         
         # 1. On tente de la créer (marchera uniquement au tout premier épisode)
-        sdf_file = "/home/polytech/Documents/Stage_ISIR/ROS/lerobot_ws/src/lerobot_description/urdf/red_box.sdf"
+        sdf_file = "/lerobot_ws/src/lerobot_description/urdf/red_box.sdf"
         cmd_create = [
             "ros2", "run", "ros_gz_sim", "create",
             "-file", sdf_file,
