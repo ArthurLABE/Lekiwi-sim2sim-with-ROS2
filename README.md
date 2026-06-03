@@ -7,11 +7,9 @@ Our goal is to train our robot LeKiwi to perform tasks in the real world, withou
 We will later be able to compare the results obtained with the simulated dataset (sim2real) and those obtained with the dataset created via teleoperation.
 
 
-<img width="934" height="641" alt="Screenshot from 2026-06-03 14-17-24" src="https://github.com/user-attachments/assets/be7d369e-651b-4966-b603-1c184bfc3429" />
+<img width="70%" alt="Screenshot from 2026-06-03 14-17-24" src="https://github.com/user-attachments/assets/be7d369e-651b-4966-b603-1c184bfc3429" />
 
-> [!NOTE]
-> Photo coming soon <br>
-<br>
+_Screenshot of the LeKiwi robot performing a pick and place episode._
 
 > [!NOTE]
 > For this version, we used a **Docker** container to run **ROS2 Humble** with **Gazebo Ignition** and **MoveIt 2** with hardware acceleration (NVIDIA GPU) enabled.
@@ -33,7 +31,7 @@ sudo apt install -y docker.io
 sudo systemctl enable --now docker
 sudo usermod -aG docker $USER 
 ```
-> [!WARNING]
+> [!IMPORTANT]
 > Restart your computer now for the addition to the `docker` group to take effect.
 
 ### Installing the NVIDIA bridge (NVIDIA Container Toolkit)
@@ -160,7 +158,7 @@ source /root/lekiwi_ws/install/setup.bash
 
 * **Terminal 3: The Mission (Automated Python Script)**
   ```bash
-  ros2 run lekiwi_application mission
+  ros2 run lekiwi_application ep_cplt
   ```
 
 ---
