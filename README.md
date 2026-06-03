@@ -7,6 +7,8 @@ Our goal is to train our robot LeKiwi to perform tasks in the real world, withou
 We will later be able to compare the results obtained with the simulated dataset (sim2real) and those obtained with the dataset created via teleoperation.
 
 
+<img width="934" height="641" alt="Screenshot from 2026-06-03 14-17-24" src="https://github.com/user-attachments/assets/be7d369e-651b-4966-b603-1c184bfc3429" />
+
 > [!NOTE]
 > Photo coming soon <br>
 <br>
