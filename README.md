@@ -1,17 +1,19 @@
-# Lerobot-simulation-with-ROS2
+# Lekiwi-simulation-with-ROS2
 
-In this repository, we explain step by step how to create a dataset of simulated pick&amp;place episodes from scratch, using ROS2 and Gazebo or RViz.
+In this repository, we explain step by step how to create a dataset of simulated pick&amp;place episodes from scratch, using ROS2, Gazebo and moveit.
 
 Our goal is to train our robot LeKiwi to perform tasks in the real world, without necessarily having to create a real dataset via teleoperation.
 
 We will later be able to compare the results obtained with the simulated dataset (sim2real) and those obtained with the dataset created via teleoperation.
 
-<img width="70%" height="618" alt="image" src="https://github.com/user-attachments/assets/e4d3b61c-f8f4-4c82-89a8-8f3b0307e686" />
 
+> [!NOTE]
+> Photo coming soon <br>
 <br>
 
 > [!NOTE]
-> This repository is an adaptation of https://github.com/ycheng517/lerobot-ros and https://github.com/Pavankv92/lerobot_ws. If in doubt, please consult those pages.<br>
+> For this version, we used a Docker container to run ROS2 Humble.
+> The simplest way to replicate this work would be to proceed in the same way, but you are free to try other approaches. <br>
 
 <br>
 
