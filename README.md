@@ -1,6 +1,6 @@
 # Lekiwi-simulation-with-ROS2
 
-In this repository, we explain step by step how to create a dataset of simulated pick&amp;place episodes from scratch, using ROS2, Gazebo and moveit.
+In this repository, we explain step by step how to create a dataset of simulated pick&amp;place episodes from scratch, using ROS2, Gazebo and MoveIt.
 
 Our goal is to train our robot LeKiwi to perform tasks in the real world, without necessarily having to create a real dataset via teleoperation.
 
@@ -12,199 +12,201 @@ We will later be able to compare the results obtained with the simulated dataset
 <br>
 
 > [!NOTE]
-> For this version, we used a Docker container to run ROS2 Humble.
+> For this version, we used a **Docker** container to run **ROS2 Humble** with **Gazebo Ignition** and **MoveIt 2** with hardware acceleration (NVIDIA GPU) enabled.
 > The simplest way to replicate this work would be to proceed in the same way, but you are free to try other approaches. <br>
 
 <br>
 
-## I- ROS2 (and others) installation
 
+---
 
-### 0. Install ROS 2 (If starting from scratch)
+## I. Prerequisites (On the host machine)
 
-If you don't have ROS 2 installed on your machine, you must install ROS 2 Humble (the recommended version for this project) on Ubuntu 22.04 before running any of the following commands.
+### Docker Installation
+Open a terminal on your host machine (Ubuntu) and run these commands to install Docker and grant yourself execution rights:
 
-  - Official Installation Guide: https://docs.ros.org/en/humble/Installation.html
-    (We recommend the "Desktop Install" to get RViz and other visualization tools by default).
-
-Why "humble"? Simply because we did it with this version. You can try replacing each time "humble" with "jazzy" (or another one), it might work but we haven't tested it.
-
-<br>
-
-### 1. Source ROS 2 (ex for Humble)
-    source /opt/ros/humble/setup.bash
-<br>
-
-### 2. Clone the robot workspace
-    git clone https://github.com/Pavankv92/lerobot_ws.git
-    cd lerobot_ws/
-<br>
-
-### 3. Install required ROS 2 dependencies
-> [!TIP]
->You may need to adapt these commands to your version by replacing "humble" with "jazzy" or another one(yours).
-```
-rosdep update
-rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
-sudo apt install ros-humble-moveit ros-humble-moveit-setup-assistant
-sudo apt install ros-humble-cv-bridge
-sudo apt install ros-humble-pinocchio
-sudo apt install ros-humble-ros-gz
-sudo apt install ros-humble-ign-ros2-control
-```
-<br>
-
-### 4. Install Python dependencies in a virtual environment (Pinocchio and Catkin fix)
-
-
-- 1. Installation of the virtual environment creation tool 
-```
+```bash
 sudo apt update
-sudo apt install python3-venv
+sudo apt install -y docker.io
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER 
 ```
-- 2. Creation of the virtual environment (named "lerobot_venv")
-```
-python3 -m venv ~/lerobot_venv --system-site-packages
-```
-- 3. Activation of this environnement
-```
-source ~/lerobot_venv/bin/activate
-```
-- 4. Installation of dependencies with `pip` 
-```
-pip install pinocchio catkin_pkg ``
-```  
-
-
-
-<br>
-
-### 5. Build the workspace
-
-    colcon build
-<br>
-
-<br>
-
-## II. (OPTIONAL) 3D Model Preparation (Only if modifying XACRO)
-
 > [!WARNING]
->If you modify the .xacro file (e.g., to add a camera or adjust the Tool Center Point), you must always compile it back into a .urdf file before launching the simulation.
+> Restart your computer now for the addition to the `docker` group to take effect.
 
-Our modified urdf files are located in the attached folder, put them in the following folder : lerobot_ws/src/lerobot_description/urdf
+### Installing the NVIDIA bridge (NVIDIA Container Toolkit)
+For Gazebo to function smoothly, the Docker container must have access to your NVIDIA graphics card.
 
-You can **modify the FPS** of the cameras (from 10 to 30) in the files named `so101_base.xacro` and rebuild the urdf after.
+```bash
+curl -fsSL [https://nvidia.github.io/libnvidia-container/gpgkey](https://nvidia.github.io/libnvidia-container/gpgkey) | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+curl -s -L [https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list](https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list) | \
+  sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+  sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
-<br>
-
-### Replace the paths with your own absolute paths 
-    xacro ~/lerobot_ws/src/lerobot_description/urdf/so101_base.xacro > ~/lerobot_ws/src/lerobot_description/urdf/so101_base_compiled.urdf
-<br>
-
-<br>
-
-<br>
-
-## III. Launching the Simulation (Standard Procedure)
-
-To use the simulated robot, you will need 3 to 4 terminals.
-
- In each new terminal, navigate to **lerobot_ws** (with `cd` command) and execute these two commands before doing anything else:
-
-    conda deactivate # excepted for 4th terminal
-    source /opt/ros/humble/setup.bash
-    source install/setup.bash
-
-<br>
-
-<br>
-
-### Terminal 1: Launch Gazebo (The 3D Environment)
-
-    ros2 launch lerobot_description so101_gazebo.launch.py
-<br>
-
-### Terminal 2: Launch Controllers 
-
-    ros2 launch lerobot_controller so101_controller.launch.py
-<br>
-
-### Terminal 3: Open the Video Bridge (To receive cameras in Python)
-> [!NOTE]
-> We used image_bridge here as it is much more performant than parameter_bridge for 30 FPS video streams.
-
-    ros2 run ros_gz_image image_bridge /camera_base/image_raw /camera_pince/image_raw
-<br>
-
-### Terminal 4: Run your Python Script (Dataset Generation / Inverse Kinematics)
-You can upload our files `.py` directly in the `src` folder, then : 
-
+sudo apt update
+sudo apt install -y nvidia-container-toolkit
+sudo systemctl restart docker
 ```
-cd ~/src/
-source /opt/ros/humble/setup.bash
+
+---
+
+## II. Creating the Docker image
+
+Navigate to your working directory containing the `lekiwi_ws` folder.
+
+```bash
+cd ~/YOUR_PATH/
+```
+
+Create a file named `Dockerfile` :
+```bash
+nano Dockerfile
+```
+
+Paste the following configuration there, which installs ROS 2 Humble and all the necessary packages (MoveIt, Gazebo, OpenCV):
+```dockerfile
+FROM osrf/ros:humble-desktop
+
+# Updating and installing robot dependencies
+
+RUN apt-get update && apt-get install -y \
+    ros-humble-pinocchio \
+    ros-humble-ign-ros2-control \
+    ros-humble-ros2-control \
+    ros-humble-ros2-controllers \
+    ros-humble-moveit \
+    ros-humble-moveit-setup-assistant \
+    ros-humble-joint-state-publisher \
+    ros-humble-ros-gz \
+    ros-humble-ros-gz-image \
+    ros-humble-cv-bridge \
+    ros-humble-image-transport \
+    python3-opencv \
+    && rm -rf /var/lib/apt/lists/*
+
+# Default environment configuration
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+```
+
+Build the Docker image (this may take a few minutes):
+```bash
+docker build -t lekiwi_env .
+```
+
+---
+
+## III. Launching the environment
+
+To launch the container, forcing GPU usage and enabling the display of 3D windows, run these commands:
+
+```bash
+# Allows Docker to display windows on the host
+xhost +local:docker
+
+# Launch the container with GPU acceleration
+docker run -it --rm \
+    --net=host \
+    --privileged \
+    --gpus all \
+    --env="NVIDIA_DRIVER_CAPABILITIES=all" \
+    --env="DISPLAY=$DISPLAY" \
+    --env="QT_X11_NO_MITSHM=1" \
+    --env="__NV_PRIME_RENDER_OFFLOAD=1" \
+    --env="__GLX_VENDOR_LIBRARY_NAME=nvidia" \
+    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+    --volume="$PWD/lekiwi_ws:/root/lekiwi_ws" \
+    --name lekiwi_container \
+    lekiwi_env bash
+```
+
+---
+
+## IV. Compiling the Workspace (Inside the Container)
+
+Once inside the Docker container, you need to install the latest ROS dependencies and compile the project:
+
+```bash
+cd /root/lekiwi_ws
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --symlink-install
 source install/setup.bash
-source ~/lerobot_venv/bin/activate
 ```
-`python3 dataset_generator.py`
 
-<br>
+---
 
-> [!NOTE]
-> Camera record is by default launching "python3 dataset_generator.py" but you can disable it by launching 
-> "python3 simu_sans_rec.py"
-<br>
+## V. Launching the Simulation (3-Terminal Architecture)
 
-### BONUS : Visualization 
-Display live camera feeds: in another **sourced** terminal (or two others for both cameras):
+The simulation relies on 3 components that must run in parallel. You will need to open **3 separate terminals** inside the container.
 
-    ros2 run rqt_image_view rqt_image_view
-<br>
+To open a new terminal in the container from your host machine, type:
 
-<br>
+```bash
+docker exec -it lekiwi_container bash
+source /root/lekiwi_ws/install/setup.bash
+```
 
-## IV. Tools & Debugging
+* **Terminal 1: The World (Gazebo & Controllers)**
+  ```bash
+  ros2 launch lekiwi_gazebo sim.launch.py
+  ```
 
-These commands are useful to manually test the robot, visualize data with RViz, or record actions.
-<br>
+* **Terminal 2: The Brain (MoveIt 2 IK Solver)**
+  ```bash
+  ros2 launch lekiwi_moveit_config move_group.launch.py use_sim_time:=true
+  ```
 
-### Spawn the red box manually
-    ros2 run ros_gz_sim create -file ~/YOUR_PATH/lerobot_ws/src/lerobot_description/urdf/red_box.sdf -name ma_boite_rouge -x -0.2 -y 0.0 -z 0.015
-<br>
+* **Terminal 3: The Mission (Automated Python Script)**
+  ```bash
+  ros2 run lekiwi_application mission
+  ```
 
-### Open RViz (To see markers and the internal TF skeleton):
-For the visual verification of the robot in motion :
+---
 
-    ros2 launch lerobot_description so101_display.launch.py
+## VI. Useful Commands & Debugging
 
-To see it mooving with the script (almost like Gazebo) : 
+If you want to test the actuators individually or view the sensors, use these commands (in a terminal within the sourced container):
 
-    ros2 launch lerobot_moveit so101_moveit.launch.py
-<br>
+**Enable onboard cameras:**
+```bash
+ros2 run rqt_image_view rqt_image_view
+```
 
-> [!WARNING]
-> RViz Troubleshooting: If RViz opens with a Frame [Base] does not exist error, go to Displays (left panel) > Global Options > Fixed Frame, and change "Base" to "World".
-> If that doesn't work, close the window and try again after pressing Ctrl+C; it worked for us!
-<br>
+**Test the omnidirectional base:**
+```bash
+# Move Forward (Repeated at 10Hz)
+ros2 topic pub -r 10 /omni_drive_controller/commands std_msgs/msg/Float64MultiArray "{data: [5.0, 5.0, 5.0]}"
 
-### Test motors manually via terminal
+# Stop (Once)
+ros2 topic pub --once /omni_drive_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.0, 0.0, 0.0]}"
+```
 
-- Open/Close the gripper:
-<br>
+**Testing the 5-axis manipulator arm live:**
+```bash
+ros2 topic pub --once /arm_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "{joint_names: ['STS3215_03a-v1_Revolute-45', 'STS3215_03a-v1-1_Revolute-49', 'STS3215_03a-v1-2_Revolute-51', 'STS3215_03a-v1-3_Revolute-53', 'STS3215_03a_Wrist_Roll-v1_Revolute-55'], points: [{positions: [0.0, -1.57, 1.57, 0.0, 0.0], time_from_start: {sec: 3, nanosec: 0}}]}"
 
-      ros2 topic pub -1 /gripper_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "{joint_names: ['6'], points: [{positions: [1.7], time_from_start: {sec: 1, nanosec: 0}}]}"
+```
 
-> [!WARNING]
-> Our joints are called from 1 to 6 (base to gripper) but if it's not the case for you, just modify the inside of the ['']
+**Test the 5-axis manipulator arm live (Graphical Interface):**
+*(This is the recommended method for debugging joint limits and controller status).*
 
-- Move the arm (Example: Return to rest position):
+If the `rqt_joint_trajectory_controller` plugin is not found initially, force ROS 2 to discover it by running:
+```bash
+ros2 run rqt_gui rqt_gui --force-discover
 
-      ros2 topic pub -1 /arm_controller/joint_trajectory trajectory_msgs/msg/JointTrajectory "{joint_names: ['1', '2', '3', '4', '5'], points: [{positions: [0, 0, 0, 0, 0], time_from_start: {sec: 2, nanosec: 0}}]}"
+Once the blank GUI opens, here are the steps to follow to load the controller:
 
-You can try replacing a 0 with 1.57 (rad) to see the joints move.
+- In the top-left menu, click on Plugins.
 
+- Navigate to Robot Tools > Joint Trajectory Controller.
 
+In the new panel that appears, configure the two dropdown menus:
 
+- Controller Manager: Select /controller_manager.
 
+- Controller: Select arm_controller.
+
+The 5 sliders for your arm's joints will appear. You can now move the sliders with the mouse to control the robot live in Gazebo.
 
 
 
