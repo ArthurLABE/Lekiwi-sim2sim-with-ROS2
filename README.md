@@ -13,6 +13,9 @@ We will later be able to compare the results obtained with the simulated dataset
 > [!NOTE]
 > This repository is an adaptation of https://github.com/ycheng517/lerobot-ros and https://github.com/Pavankv92/lerobot_ws. If in doubt, please consult those pages.<br>
 
+> [!IMPORTANT]
+> This branch is a simplified version, you can see a better one named "lekiwi-version" with the complete urdf of the LeKiwi robot.
+
 <br>
 
 ## I- ROS2 (and others) installation
