@@ -193,6 +193,7 @@ ros2 topic pub --once /arm_controller/joint_trajectory trajectory_msgs/msg/Joint
 If the `rqt_joint_trajectory_controller` plugin is not found initially, force ROS 2 to discover it by running:
 ```bash
 ros2 run rqt_gui rqt_gui --force-discover
+```
 
 Once the blank GUI opens, here are the steps to follow to load the controller:
 
@@ -211,9 +212,16 @@ The 5 sliders for your arm's joints will appear. You can now move the sliders wi
 
 
 
+## VII. Dataset recording and SmolVLA fine-tuning 
 
+> [!NOTE]
+> This section is currently being tested, we will share our results once the tests are complete. 
 
-
+> [!NOTE]
+> next steps :
+> - SimtoSim tests
+> - SimtoReal tests
+> - Comparison between teleoperation and simulation training
 
 
 
