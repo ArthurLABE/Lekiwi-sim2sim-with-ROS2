@@ -221,8 +221,12 @@ After recording a 141-episode dataset and fine-tuning SmolVLA, we tested the mod
 As shown in the following video, the arm struggled to grasp the box. The robot navigated perfectly toward the target before stopping, but the arm consistently failed to pick up the box, meaning the mission was never successfully completed.
 
 
+
+> Video link : https://youtube.com/shorts/0_pIW6L7TGU?feature=share
+
+
 >[!NOTE]
-> Video editing is underway.
+>This video is not the final version that will be produced at the end of this section.
 
 
 Our Hypotheses:
