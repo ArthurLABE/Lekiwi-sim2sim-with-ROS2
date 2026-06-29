@@ -212,14 +212,38 @@ The 5 sliders for your arm's joints will appear. You can now move the sliders wi
 
 
 
-## VII. Dataset recording and SmolVLA fine-tuning 
+## VII. SimtoSim tests
 
-> [!NOTE]
-> This section is currently being tested, we will share our results once the tests are complete. 
+### First try 
+
+After recording a 141-episode dataset and fine-tuning SmolVLA, we tested the model in the exact same simulation environment used for training. We didn't add any new elements; our goal was simply to test if the robot could replicate the episodes it saw in the dataset (still with small position randomizations for the box and the deposit area).
+
+As shown in the following video, the arm struggled to grasp the box. The robot navigated perfectly toward the target before stopping, but the arm consistently failed to pick up the box, meaning the mission was never successfully completed.
+
+
+>[!NOTE]
+> Video editing is underway.
+
+
+Our Hypotheses:
+
+- Lack of visual perspective: We hypothesized that the camera images lacked depth cues. With only the box and the deposit area in an empty gray environment, it was extremely difficult for the model to estimate distances. To solve this primary issue, we added a checkerboard floor to the simulation, which should provide strong visual anchors for depth and perspective estimation.
+
+- Lack of corrective actions: We also realized that our simulated dataset lacked recovery behaviors. In a human-teleoperated dataset, the operator naturally makes slight imprecisions and continuously corrects them with the joystick, teaching the AI how to recover from drift. In contrast, our simulated simulation generates mathematically perfect trajectories. 
+We initially considered injecting random noise into the arm's approach phase to mimic the imperfect, corrective movements of a human operator. However, we decided against it to avoid Causal Confusion during the Behavioral Cloning process.
+In a programmatically generated dataset (like ours with MoveIt), if we script an intentional error (e.g., "move 3cm to the right, then correct"), the action log explicitly records that off-center movement as the correct desired action for that specific visual frame.
+If we injected this noise, the VLA model would learn the wrong cause-and-effect: it would look at the box and learn to intentionally approach it from a skewed angle, rather than learning how to recover from drift. 
+To maintain the mathematical coherence of the dataset, we kept the programmed trajectories strictly perfect and chose to rely entirely on visual domain randomization (like the checkerboard floor) to help the model generalize its perspective.
+
+
+    
+
+>[!NOTE]
+>    We are currently recording (and will subsequently fine-tune on) a new dataset identical to the previous one, but with the checkerboard floor included. This will allow us to test our first hypothesis. We will update this repository once the evaluation of this new model is complete!
 
 > [!NOTE]
 > next steps :
-> - SimtoSim tests
+> - make SimtoSim work
 > - SimtoReal tests
 > - Comparison between teleoperation and simulation training
 
