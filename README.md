@@ -240,10 +240,16 @@ If we injected this noise, the VLA model would learn the wrong cause-and-effect:
 To maintain the mathematical coherence of the dataset, we kept the programmed trajectories strictly perfect and chose to rely entirely on visual domain randomization (like the checkerboard floor) to help the model generalize its perspective.
 
 
+
+
     
 
 >[!NOTE]
 >    We are currently recording (and will subsequently fine-tune on) a new dataset identical to the previous one, but with the checkerboard floor included. This will allow us to test our first hypothesis. We will update this repository once the evaluation of this new model is complete!
+
+
+<img width="50%" alt="Screenshot" src="https://github.com/user-attachments/assets/3fc8d922-12e2-4bf3-a4a7-1cba8a6d1514" />
+
 
 > [!NOTE]
 > next steps :
