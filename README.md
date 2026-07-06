@@ -241,14 +241,39 @@ To maintain the mathematical coherence of the dataset, we kept the programmed tr
 
 
 
-
-    
-
->[!NOTE]
->    We are currently recording (and will subsequently fine-tune on) a new dataset identical to the previous one, but with the checkerboard floor included. This will allow us to test our first hypothesis. We will update this repository once the evaluation of this new model is complete!
-
+### Second try : Checkerboard  
 
 <img width="50%" alt="Screenshot" src="https://github.com/user-attachments/assets/3fc8d922-12e2-4bf3-a4a7-1cba8a6d1514" />
+
+We tested another 141-episode dataset, similar to the previous one, but it didn't go as expected: the moving base wasn't driving straight. Before explaining this result, we must note an issue encountered during the dataset recording. A physics glitch in Gazebo caused the stats.json file to record a maximum wheel velocity of over 37,000 rad/s, which is physically impossible. We had visually verified the 141 episodes before fine-tuning the model to ensure the training data looked good, but we couldn't see this hidden metric issue coming.
+
+This stats.json file is responsible for "denormalizing" the model's outputs (converting them from values between [-1, 1] back to real physical values) to send to the robot during inference. However, even after manually fixing these statistical outliers to realistic limits, the robot's behavior remained erratic. We concluded that the true cause of the failure was the checkerboard itself: its high-frequency texture caused a visual "aliasing" effect. This created an Out-of-Distribution (OOD) shock for the Vision Transformer, causing the AI to panic and output extreme action values.
+
+
+### Third try : Bigger dataset  
+
+After this unsuccessful test, we took a step back to try another hypothesis. We thought that 141 episodes were simply not enough to compensate for the lack of natural noise in the arm's movements. Since we had already established the risk of injecting artificial noise during the dataset generation, our alternative was to increase the sheer volume of data. We expanded the dataset to 265 episodes. We believe this broader dataset will allow the model to perform better, particularly during the grasping phase.
+
+>[!NOTE]
+>    We are currently fine-tuning the new dataset (identical to the first one but with 265 episodes). This will allow us to test our second hypothesis. We will update this repository once the evaluation of this new model is complete!
+
+
+### Fourth try : Domain randomization
+
+While fine-tuning the third model, we generated a new dataset with multiple variations to improve the model's generalization capabilities. We added randomly colored distractors (spheres, cylinders, and cubes) to the environment. Furthermore, the target box and the deposit area now change colors randomly for each episode, in addition to having their positions slightly randomized. The goal is to force the AI to focus on the geometric features of the task rather than memorizing specific colors.
+
+>[!NOTE]
+>  We plan to also record 265 episodes for this setup and evaluate it right after the previous one.
+
+
+### Fifth try : Grasp consistency (Solving Action Aliasing)
+
+During our first attempt, we noticed the arm struggling to successfully grasp the box. For this fifth try, we wanted to investigate if the issue stemmed from a lack of consistency in the grasping trajectories. In Imitation Learning, if the model sees similar images but is mapped to vastly different actions (e.g., three different programmed ways to approach the same box), it can suffer from "Action Aliasing" and become confused, often predicting an average, incorrect trajectory.
+
+To verify this, we filtered our datasets (merging the basic one and the domain randomization one) to include only one consistent type of grasp out of the three originally programmed.
+
+>[!NOTE]
+> This will result in a much smaller dataset, but it remains a highly relevant hypothesis to test. We will conduct this experiment shortly after the previous ones.
 
 
 > [!NOTE]
