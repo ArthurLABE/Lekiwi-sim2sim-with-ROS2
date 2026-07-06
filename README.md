@@ -260,6 +260,9 @@ After this unsuccessful test, we took a step back to try another hypothesis. We 
 
 ### Fourth try : Domain randomization
 
+<img width="50%" alt="Screenshot from 2026-07-06 10-34-38" src="https://github.com/user-attachments/assets/7fa5e85a-33f0-4b9a-9133-b3da0d64827f" />
+
+
 While fine-tuning the third model, we generated a new dataset with multiple variations to improve the model's generalization capabilities. We added randomly colored distractors (spheres, cylinders, and cubes) to the environment. Furthermore, the target box and the deposit area now change colors randomly for each episode, in addition to having their positions slightly randomized. The goal is to force the AI to focus on the geometric features of the task rather than memorizing specific colors.
 
 >[!NOTE]
