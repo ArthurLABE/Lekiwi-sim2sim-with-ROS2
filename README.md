@@ -325,6 +325,8 @@ In the code, we commanded the robot to stop at a fixed distance (around 33 cm) f
 
 As a result, the arm had almost the exact same joint positions for every single grasp in the dataset. This lack of diversity is a major issue for generalization and heavily promotes overfitting. We should have added randomness to this approach distance. At the time, we chose a fixed distance because adding randomness caused MoveIt2's success rate to drop significantly (around 2/5 successful grasps). We chose stability to record the dataset faster, but taking more time to fix this would have resulted in much better training data.
 
+<br>
 
+### 
 
 
