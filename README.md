@@ -285,7 +285,7 @@ We trained ACT models (using the same checkpoints as before) on a dataset of 343
 
 ### Fifth try : Grasp consistency 
 
-During our first attempt with SmolVLA, we noticed the arm struggling to successfully grasp the box. For this fifth try, we wanted to investigate if the issue stemmed from a lack of consistency in the grasping trajectories. In Imitation Learning, if the model sees similar images but is mapped to vastly different actions (e.g., three different programmed ways to approach the same box), it can suffer from "Action Aliasing" and become confused. We wanted to see if this model could achieve better grasping success rate compared to other models using multiple trajectories.
+During our first attempt with SmolVLA, we noticed the arm struggling to successfully grasp the box. For this fifth try, we wanted to investigate if the issue stemmed from a lack of consistency in the grasping trajectories. In Imitation Learning, if the model sees similar images but is mapped to different actions (e.g., three different programmed ways to approach the same box), it can suffer from "Action Aliasing" and become confused. We wanted to see if this model could achieve better grasping success rate compared to other models using multiple trajectories.
 
 To verify this, we filtered our datasets (merging the basic one and the domain-randomized one) to include only one consistent type of grasp out of the three originally programmed.
 
@@ -296,10 +296,23 @@ We were unable to achieve a higher success rate for the grasping task; this coul
 
 For this final experiment, we wanted to determine whether a merged dataset—comprising the 265 demonstrations from the reference dataset and the 343 demonstrations from the domain randomization dataset—could outperform the one using only domain randomization. We trained this model for 100,000 steps, with checkpoints saved every 20,000 steps.
 
-Qualitative evaluation of these models showed that using demonstrations from the baseline configuration was less effective. Indeed, models trained with domain randomization achieved a higher success rate than those trained on the merged dataset. This holds true for evaluations based on the baseline configuration as well as those based on domain randomization.
+Qualitative evaluation of these models showed that using demonstrations from the baseline configuration was less effective. Indeed, models trained with domain randomization achieved a higher success rate than those trained on the merged dataset. This holds true for evaluations based on the baseline configuration as well as those based on domain randomization. However, this assertion is based solely on the observation of multiple tests of each model; it is not quantified and must therefore be treated with caution. 
+
+<br>
+
+## Conclusion, results and areas for improvement
+
+During this work we had a qualitative approach that seemed good in the beginning but it appread that we should have done differently certain things : 
+
+### Quantitative approach
+
+To make our approach more scientific, we should have evaluated our models using precise metrics. For example, we could have measured:
+- The distance between the center of the box and the center of the deposit area.
+- Grasp quality (normal force, sliding force, and the alignment between the gripper's fingers and the box center).
+
+With these metrics, we could have distributed rewards for each demonstration in the dataset. This would have given us clear thresholds to compare the success rates of our models with real precision. 
+
+Without objective numbers, claiming that one model is better than another lacks scientific proof. This is why our current visual approach remains imprecise and should be considered as a qualitative observation.
 
 
 
-
-
-    
