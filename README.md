@@ -249,13 +249,24 @@ We tested another 141-episode dataset, similar to the previous one, but it didn'
 
 This stats.json file is responsible for "denormalizing" the model's outputs (converting them from values between [-1, 1] back to real physical values) to send to the robot during inference. However, even after manually fixing these statistical outliers to realistic limits, the robot's behavior remained erratic. We concluded that the true cause of the failure was the checkerboard itself: its high-frequency texture caused a visual "aliasing" effect. This created an Out-of-Distribution (OOD) shock for the Vision Transformer, causing the AI to panic and output extreme action values.
 
+<br>
+
 
 ### Third try : Bigger dataset  
 
 After this unsuccessful test, we took a step back to try another hypothesis. We thought that 141 episodes were simply not enough to compensate for the lack of natural noise in the arm's movements. Since we had already established the risk of injecting artificial noise during the dataset generation, our alternative was to increase the sheer volume of data. We expanded the dataset to 265 episodes. We believe this broader dataset will allow the model to perform better, particularly during the grasping phase.
 
->[!NOTE]
->    We are currently fine-tuning the new dataset (identical to the first one but with 265 episodes). This will allow us to test our second hypothesis. We will update this repository once the evaluation of this new model is complete!
+>[!IMPORTANT]
+> **Model Architecture Update:** We switched from SmolVLA to ACT after observing a significant performance gain. We can attribute this improvement to the contrast between ACT’s "action chunking" mechanism—which produces smooth trajectories—and SmolVLA’s token-based approach, which ultimately proves excessive for deterministic tasks such as "grasp the red box and place it on the orange zone." Moving forward, all models in this repository will be based on the ACT architecture.
+
+We evaluated the ACT model across several fine-tuning checkpoints (5k, 10k, 20k, 40k, and 60k steps), testing chunk sizes of both 10 and 100 actions for each. While our current comparison is purely qualitative, the initial results are highly encouraging. We have not yet extracted formal quantitative metrics; this limitation is discussed in the final section of this repository. 
+The video below shows the robot successfully performing the task for one of the tested configurations.
+
+> Video link : https://youtu.be/08YMGowBGiA
+
+Across all the successful tests, the distance between the center of the drop zone and the box was unsatisfactory. This is a parameter we should have taken into account for the evaluation, from the time the dataset was recorded right up to the present. In the absence of metrics, we can only assume that this lack of precision is due to overfitting: a reproduction of joint positions rather than a true understanding of the task.
+
+<br>
 
 
 ### Fourth try : Domain randomization
@@ -265,25 +276,28 @@ After this unsuccessful test, we took a step back to try another hypothesis. We 
 
 While fine-tuning the third model, we generated a new dataset with multiple variations to improve the model's generalization capabilities. We added randomly colored distractors (spheres, cylinders, and cubes) to the environment. Furthermore, the target box and the deposit area now change colors randomly for each episode, in addition to having their positions slightly randomized. The goal is to force the AI to focus on the geometric features of the task rather than memorizing specific colors.
 
->[!NOTE]
->  We plan to also record 265 episodes for this setup and evaluate it right after the previous one.
+We trained ACT models (using the same checkpoints as before) on a dataset of 343 demonstrations; the results proved relatively satisfactory, even though we do not yet have metrics to substantiate our conclusions. The model was able to perform the task in the presence of new background distractors, demonstrating that it had correctly understood both the task and the irrelevant elements. The presentation video is available via the link below, as with the previous section.
+
+> Video link : https://youtu.be/DQq9r6hJD5o 
+
+<br>
 
 
-### Fifth try : Grasp consistency (Solving Action Aliasing)
+### Fifth try : Grasp consistency 
 
-During our first attempt, we noticed the arm struggling to successfully grasp the box. For this fifth try, we wanted to investigate if the issue stemmed from a lack of consistency in the grasping trajectories. In Imitation Learning, if the model sees similar images but is mapped to vastly different actions (e.g., three different programmed ways to approach the same box), it can suffer from "Action Aliasing" and become confused, often predicting an average, incorrect trajectory.
+During our first attempt with SmolVLA, we noticed the arm struggling to successfully grasp the box. For this fifth try, we wanted to investigate if the issue stemmed from a lack of consistency in the grasping trajectories. In Imitation Learning, if the model sees similar images but is mapped to vastly different actions (e.g., three different programmed ways to approach the same box), it can suffer from "Action Aliasing" and become confused. We wanted to see if this model could achieve better grasping success rate compared to other models using multiple trajectories.
 
-To verify this, we filtered our datasets (merging the basic one and the domain randomization one) to include only one consistent type of grasp out of the three originally programmed.
+To verify this, we filtered our datasets (merging the basic one and the domain-randomized one) to include only one consistent type of grasp out of the three originally programmed.
 
->[!NOTE]
-> This will result in a much smaller dataset, but it remains a highly relevant hypothesis to test. We will conduct this experiment shortly after the previous ones.
+We were unable to achieve a higher success rate for the grasping task; this could be attributed to the fact that we only had 37 demonstrations of the "top-down" trajectory—the one we had selected for this trial. We should have prioritized the grasping trajectory that was most prevalent in the dataset to avoid this bias. Unfortunately, we no longer have the time required to repeat the experiment.
 
 
-> [!NOTE]
-> next steps :
-> - make SimtoSim work
-> - SimtoReal tests
-> - Comparison between teleoperation and simulation training
+### Final try : Merged dataset
+
+For this final experiment, we wanted to determine whether a merged dataset—comprising the 265 demonstrations from the reference dataset and the 343 demonstrations from the domain randomization dataset—could outperform the one using only domain randomization. We trained this model for 100,000 steps, with checkpoints saved every 20,000 steps.
+
+Qualitative evaluation of these models showed that using demonstrations from the baseline configuration was less effective. Indeed, models trained with domain randomization achieved a higher success rate than those trained on the merged dataset. This holds true for evaluations based on the baseline configuration as well as those based on domain randomization.
+
 
 
 
