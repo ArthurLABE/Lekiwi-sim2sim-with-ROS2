@@ -327,5 +327,8 @@ As a result, the arm had almost the exact same joint positions for every single 
 
 <br>
 
+### Future Work 
 
-
+Due to time constraints, we were not able to test these models on the physical robot. However, deploying them in the real world would be a highly interesting next step to compare our *sim2real* results with *real2real* approaches. 
+Additionally, we could improve the domain randomization dataset by randomizing the colors of the floor and walls. This would force the model to focus purely on the task and help it generalize as much as possible to new environments.
+Finally, as previously discussed, the most important next step would be to implement quantitative metrics. Having objective numbers is essential to scientifically validate our results and make the comparison between models truly robust.
