@@ -327,6 +327,5 @@ As a result, the arm had almost the exact same joint positions for every single 
 
 <br>
 
-### 
 
 
