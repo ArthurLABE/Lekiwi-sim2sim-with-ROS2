@@ -303,7 +303,8 @@ Qualitative evaluation of these models showed that using demonstrations from the
 ## Conclusion, results and areas for improvement
 
 During this work we had a qualitative approach that seemed good in the beginning but it appread that we should have done differently certain things : 
-
+             
+                               
 ### Quantitative approach
 
 To make our approach more scientific, we should have evaluated our models using precise metrics. For example, we could have measured:
@@ -313,6 +314,17 @@ To make our approach more scientific, we should have evaluated our models using 
 With these metrics, we could have distributed rewards for each demonstration in the dataset. This would have given us clear thresholds to compare the success rates of our models with real precision. 
 
 Without objective numbers, claiming that one model is better than another lacks scientific proof. This is why our current visual approach remains imprecise and should be considered as a qualitative observation.
+
+<br>
+
+### Dataset Recording Limitations : The Grasping Approach
+
+During the dataset recording phase, we used inverse kinematics from MoveIt2 for the grasping approach. After trying several methods, this was the most reliable one, but we had to make a compromise. 
+
+In the code, we commanded the robot to stop at a fixed distance (around 33 cm) from the center of the box, and then MoveIt2 calculated the joint values needed to grasp it. The problem is that even when we changed the box's position in the environment, the robot always approached it from the exact same distance (minus some slight wheel slip). 
+
+As a result, the arm had almost the exact same joint positions for every single grasp in the dataset. This lack of diversity is a major issue for generalization and heavily promotes overfitting. We should have added randomness to this approach distance. At the time, we chose a fixed distance because adding randomness caused MoveIt2's success rate to drop significantly (around 2/5 successful grasps). We chose stability to record the dataset faster, but taking more time to fix this would have resulted in much better training data.
+
 
 
 
