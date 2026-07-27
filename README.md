@@ -1,4 +1,4 @@
-# Lekiwi-simulation-with-ROS2
+# Lekiwi-sim2sim-with-ROS2
 
 In this repository, we explain step by step how to create a dataset of simulated pick&amp;place episodes from scratch, using ROS2, Gazebo and MoveIt.
 
