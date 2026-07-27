@@ -214,6 +214,12 @@ The 5 sliders for your arm's joints will appear. You can now move the sliders wi
 
 ## VII. SimtoSim tests
 
+>[!NOTE]
+>If you wish to reproduce this work, you may need access to our datasets and trained models. You can find them via the link below; please ensure you place the `datasets_converties` and `modeles_lekiwi` folders in your Docker workspace, but avoid including the `datasets` folder, as this would take up unnecessary space.
+> https://cloud.isir.upmc.fr/s/fCRowPSL9RwqfCP 
+
+
+
 ### First try 
 
 After recording a 141-episode dataset and fine-tuning SmolVLA, we tested the model in the exact same simulation environment used for training. We didn't add any new elements; our goal was simply to test if the robot could replicate the episodes it saw in the dataset (still with small position randomizations for the box and the deposit area).
