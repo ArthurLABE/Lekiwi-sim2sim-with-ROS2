@@ -215,7 +215,7 @@ The 5 sliders for your arm's joints will appear. You can now move the sliders wi
 ## VII. SimtoSim tests
 
 >[!NOTE]
->If you wish to reproduce this work, you may need access to our datasets and trained models. You can find them via the link below; please ensure you place the `datasets_converties` and `modeles_lekiwi` folders in your Docker workspace, but avoid including the `datasets` folder, as this would take up unnecessary space.
+>If you wish to reproduce this work, you may need access to our datasets and trained models. You can find them via the link below; please ensure you place the `datasets_converties` and `modeles_lekiwi` folders in your Docker workspace, but avoid including the `datasets` folder, as this would take up unnecessary space. We trained our models for a set number of steps; it is therefore perfectly normal to find models showing a fractional number of epochs.
 > https://cloud.isir.upmc.fr/s/fCRowPSL9RwqfCP 
 
 
